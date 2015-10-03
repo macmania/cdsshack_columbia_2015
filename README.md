@@ -1,2 +1,3 @@
 # cdsshack_columbia_2015
-Columbia Data Science Hackathon 2015
+Repository for the Columbia University Data Science Student Challenge
+Contains datasets and code for understanding the challenge.
