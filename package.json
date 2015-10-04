@@ -1,0 +1,8 @@
+{
+  "name": "cdsshack_columbia_2015",
+  "dependencies": {
+    "datamap": "*",
+    "topojson": "*"
+  }
+
+}
