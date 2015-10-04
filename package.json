@@ -3,7 +3,8 @@
   "dependencies": {
     "datamap": "*",
     "topojson": "*",
-    "babyparse": "*"
+    "babyparse": "*",
+    "randomcolor": "*", 
   }
 
 }

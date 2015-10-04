@@ -21,9 +21,13 @@ function setUSAMapOverLay(){
 
 //sets up the US color overlays
 (function setUSColors(){
-    var usStateOrganRegistrations = Papa.parse('OPO by State.csv', {
 
-    })
+    var usStateOrganRegistrations = Papa.parse('datasets/OPO by State.csv', {
+        complete:function(results){
+            console.log(results)
+            return results
+        }
+    });
 })()
 
 
