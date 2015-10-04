@@ -11,7 +11,7 @@ function setUSAMapOverLay(){
 }
 //sets up the nyc county overlay
 (function setNYCCountyOverlay(){
-    var nycCounties = Papa.parse('newyork-with-counties.json', {
+    var nycCountiesVoterRegistration = Papa.parse('datasets/2015_Voter_Registration_By_County.csv', {
         complete: function(results) {
             console.log(results)
             return results
@@ -19,6 +19,12 @@ function setUSAMapOverLay(){
     })
 }())
 
+//sets up the US color overlays
+(function setUSColors(){
+    var usStateOrganRegistrations = Papa.parse('OPO by State.csv', {
+
+    })
+})()
 
 
 var map = new Datamap({
