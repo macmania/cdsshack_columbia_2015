@@ -2,24 +2,32 @@
 function setUSAMapOverLay(){
     var countiesDict = {}
     $.getJSON('newyork-with-counties.json', function(json){
-        var county;
-        for(county of json.objects['subunits-ny'].geometries){
+        for(var county of json.objects['subunits-ny'].geometries){
             var name = county.properties['name'] != null ? county.properties['name'] : 'empty'
             countiesDict[name] = county.id
         }
     });
     return countiesDict
 }
-//sets up the nyc county
-function setNYCCountyOverlay(){
-
-}
+//sets up the nyc county overlay
+(function setNYCCountyOverlay(){
+    var nycCounties = Papa.parse('newyork-with-counties.json', {
+        complete: function(results) {
+            console.log(results)
+            return results
+        }
+    })
+}())
 
 
 
 var map = new Datamap({
     element: document.getElementById('map'),
     scope: 'usa',
+    geographyConfig: {
+        highlightFillColor: '#F4C2C5'
+    },
+    highlightFillColor: '#F4C2C5',
     setProjection: function(element, options) {
         var projection, path;
         projection = d3.geo.albersUsa()
@@ -40,8 +48,10 @@ var newyorkcity = new Datamap({
     element: document.getElementById('container1'),
     projection: '',
     geographyConfig: {
-        dataUrl: 'newyork-with-counties.json'
+        dataUrl: 'newyork-with-counties.json',
+        highlightFillColor: '#F4C2C5'
     },
+
     setProjection: function(element) {
         var projection = d3.geo.equirectangular()
             .center([-72, 43])
@@ -54,7 +64,7 @@ var newyorkcity = new Datamap({
         return {path: path, projection: projection};
     },
     fills: {
-        defaultFill: '#f0af0a',
+        defaultFill: '#FF00FF',
         lt50: 'rgba(0,244,244,0.9)',
         gt50: 'red'
     },

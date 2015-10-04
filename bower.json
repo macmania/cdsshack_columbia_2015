@@ -5,8 +5,8 @@
     "d3": "*",
     "datamaps": "*",
     "topojson": "*",
-    "jquery": "^1.11.1"
-
+    "jquery": "^1.11.1",
+    "papaparse": "*"
   },
   "private": true
 }
