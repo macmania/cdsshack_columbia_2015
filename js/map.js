@@ -7,7 +7,6 @@ var map = new Datamap({
     setProjection: function(element, options) {
         var projection, path;
         projection = d3.geo.albersUsa()
-            .center([long, lat])
             .scale(element.offsetWidth)
             .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 
