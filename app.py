@@ -1,9 +1,10 @@
 from flask import Flask, request, send_from_directory
 from flask import render_template
-from flask_s3 import Flasks3
+from flask_s3 import FlaskS3
 
 app = Flask(__name__, static_url_path='')
 app.config['S3_BUCKET_NAME'] = 'organ-donation-data-viz'
+app.config['USE_S3_DEBUG'] = True
 
 @app.route('/')
 def index():
@@ -18,4 +19,4 @@ def send_js(path):
 	return send_from_directory('js', path)
 
 if __name__ == '__main__':
-    app.run()
+    app.run(debug=True)
