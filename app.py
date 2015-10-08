@@ -1,7 +1,9 @@
 from flask import Flask, request, send_from_directory
 from flask import render_template
+from flask_s3 import Flasks3
 
 app = Flask(__name__, static_url_path='')
+app.config['S3_BUCKET_NAME'] = 'organ-donation-data-viz'
 
 @app.route('/')
 def index():
