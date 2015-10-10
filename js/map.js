@@ -50,6 +50,8 @@ function setUSColors (){
 }
 
 var AmericaStates = {}
+var fillUSMap = {}
+var dataUSMap = {}
 //sets up the colors for each of the 50 states
 function setUSDictionary(){
 
@@ -57,6 +59,7 @@ function setUSDictionary(){
     var USDictionaryData = {}
     var USColors = []
     var i = 0
+    var postalCode = ""
 
     USColors = randomColor({
         count: 50,
@@ -68,42 +71,49 @@ function setUSDictionary(){
         USDictionaryData = json
 
         for(var aState in json) {
+            postalCode = json[aState]
             AmericaStates[aState] = {
                 'color': USColors[i],
                 'id': json[aState],
             }
+            fillUSMap[aState] = USColors[i]
             i++
+            dataUSMap[postalCode] = {fillKey: aState}
         }
+
+        var map = new Datamap({
+            element: document.getElementById('map'),
+            scope: 'usa',
+            geographyConfig: {
+                highlightFillColor: '#F4C2C5'
+            },
+            highlightFillColor: '#F4C2C5',
+            setProjection: function(element, options) {
+                var projection, path;
+                projection = d3.geo.albersUsa()
+                    .scale(1300)
+                    .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+
+                path = d3.geo.path()
+                    .projection( projection )
+                return {
+                    path: path,
+                    projection: projection
+                };
+            },
+            fills: fillUSMap,
+            data: dataUSMap
+        });
+
+
     })
-
-
 
 
 }
 
 //call this function
 setUSDictionary()
-var map = new Datamap({
-    element: document.getElementById('map'),
-    scope: 'usa',
-    geographyConfig: {
-        highlightFillColor: '#F4C2C5'
-    },
-    highlightFillColor: '#F4C2C5',
-    setProjection: function(element, options) {
-        var projection, path;
-        projection = d3.geo.albersUsa()
-            .scale(1300)
-            .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
 
-        path = d3.geo.path()
-            .projection( projection )
-        return {
-            path: path,
-            projection: projection
-        };
-    },
-});
 
 var newyorkcity = new Datamap({
     scope: 'subunits-ny',
