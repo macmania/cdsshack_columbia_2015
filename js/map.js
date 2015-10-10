@@ -1,6 +1,7 @@
+
+var countiesDict = {}
 //sets up the different colors in USA
 function setUSAMapOverLay(){
-    var countiesDict = {}
     $.getJSON('newyork-with-counties.json', function(json){
         for(var county of json.objects['subunits-ny'].geometries){
             var name = county.properties['name'] != null ? county.properties['name'] : 'empty'
@@ -11,24 +12,27 @@ function setUSAMapOverLay(){
 }
 //sets up the nyc county overlay
 (function setNYCCountyOverlay(){
-    var nycCountiesVoterRegistration = Papa.parse('datasets/2015_Voter_Registration_By_County.csv', {
-        complete: function(results) {
-            console.log(results)
-            return results
-        }
+    $.get('js/datasets/2015_Voter_Registration_By_County.csv', function(csv){
+        var nycCountiesVoterRegistration = Papa.parse(csv, {
+            complete: function(results) {
+                console.log(results)
+                return results
+            }
+        })
     })
 }())
 
 //sets up the US color overlays
-//(function setUSColors(){
-//
-//    var usStateOrganRegistrations = Papa.parse('datasets/OPO by State.csv', {
-//        complete:function(results){
-//            console.log(results)
-//            return results
-//        }
-//    })
-//}())
+(function setUSColors(){
+    $.get('js/datasets/OPO-by-State.csv', function(csv){
+        var usStateOrganRegistrations = Papa.parse(csv, {
+            complete:function(results){
+                console.log(results)
+                return results
+            }
+        })
+    })
+}())
 
 
 var map = new Datamap({
