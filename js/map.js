@@ -20,10 +20,10 @@ function setUSAMapOverLay(){
             }
         })
     })
-}())
+}());
 
 //sets up the US color overlays
-(function setUSColors(){
+function setUSColors (){
     $.get('js/datasets/OPO-by-State.csv', function(csv){
         var usStateOrganRegistrations = Papa.parse(csv, {
             complete:function(results){
@@ -32,7 +32,7 @@ function setUSAMapOverLay(){
             }
         })
     })
-}())
+}
 
 
 var map = new Datamap({
