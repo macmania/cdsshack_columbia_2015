@@ -6,7 +6,8 @@
     "datamaps": "*",
     "topojson": "*",
     "jquery": "^1.11.1",
-    "papaparse": "*"
+    "papaparse": "*",
+    "randomcolor":"*"
   },
   "private": true
 }

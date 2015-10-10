@@ -1,11 +1,24 @@
 
 var countiesDict = {}
+
+
 //sets up the different colors in USA
-function setUSAMapOverLay(){
+function setNYCMapOverLay(){
+    var colorsNY = randomColor({
+        count: 62,
+        luminosity: 'bright',
+        hue: 'random'
+    });
+    var i = 0;
     $.getJSON('newyork-with-counties.json', function(json){
         for(var county of json.objects['subunits-ny'].geometries){
             var name = county.properties['name'] != null ? county.properties['name'] : 'empty'
-            countiesDict[name] = county.id
+            countiesDict[name] = {
+                "id": county.id,
+                "color": colorsNY[i]
+            }
+
+            i++
         }
     });
     return countiesDict
@@ -23,7 +36,9 @@ function setUSAMapOverLay(){
 }());
 
 //sets up the US color overlays
+//I don't know what you're doing here
 function setUSColors (){
+
     $.get('js/datasets/OPO-by-State.csv', function(csv){
         var usStateOrganRegistrations = Papa.parse(csv, {
             complete:function(results){
@@ -34,7 +49,40 @@ function setUSColors (){
     })
 }
 
+var AmericaStates = {}
+//sets up the colors for each of the 50 states
+function setUSDictionary(){
 
+    //temporary place holder
+    var USDictionaryData = {}
+    var USColors = []
+    var i = 0
+
+    USColors = randomColor({
+        count: 50,
+        luminosity: 'bright',
+        hue: 'random'
+    });
+
+    $.getJSON('lib/name-to-postal.json', function(json){
+        USDictionaryData = json
+
+        for(var aState in json) {
+            AmericaStates[aState] = {
+                'color': USColors[i],
+                'id': json[aState],
+            }
+            i++
+        }
+    })
+
+
+
+
+}
+
+//call this function
+setUSDictionary()
 var map = new Datamap({
     element: document.getElementById('map'),
     scope: 'usa',
@@ -54,7 +102,7 @@ var map = new Datamap({
             path: path,
             projection: projection
         };
-    }
+    },
 });
 
 var newyorkcity = new Datamap({

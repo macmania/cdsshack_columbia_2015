@@ -31,7 +31,6 @@
     "commit": "455f347ecde2f61f9d32d9d1dbe4f6f28e54fc9e"
   },
   "_source": "git://github.com/davidmerfield/randomColor.git",
-  "_target": "~0.4.0",
-  "_originalSource": "randomcolor",
-  "_direct": true
+  "_target": "*",
+  "_originalSource": "randomcolor"
 }
