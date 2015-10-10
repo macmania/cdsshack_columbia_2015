@@ -1,6 +1,7 @@
 
 var countiesDict = {}
-
+var fillsNY = {}
+var dataNY = {}
 
 //sets up the different colors in USA
 function setNYCMapOverLay(){
@@ -62,7 +63,7 @@ function setUSDictionary(){
     var postalCode = ""
 
     USColors = randomColor({
-        count: 50,
+        count: 60,
         luminosity: 'bright',
         hue: 'random'
     });
