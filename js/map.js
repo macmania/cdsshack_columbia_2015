@@ -18,7 +18,8 @@ function setNYCMapOverLay(){
                 "id": county.id,
                 "color": colorsNY[i]
             }
-
+            fillsNY[county.id] = colorsNY[i]
+            dataNY[county.id] = {fillKey: county.id}
             i++
         }
     });
@@ -114,7 +115,7 @@ function setUSDictionary(){
 
 //call this function
 setUSDictionary()
-
+setNYCMapOverLay()
 
 var newyorkcity = new Datamap({
     scope: 'subunits-ny',
@@ -136,15 +137,19 @@ var newyorkcity = new Datamap({
 
         return {path: path, projection: projection};
     },
-    fills: {
-        defaultFill: '#FF00FF',
-        lt50: 'rgba(0,244,244,0.9)',
-        gt50: 'red'
-    },
+    fills: fillsNY,
+    //  {
+    //    defaultFill: '#FF00FF',
+    //    lt50: 'rgba(0,244,244,0.9)',
+    //    gt50: 'red'
+    //},
 
-    data: {
-        '071': {fillKey: 'lt50' },
-        '001': {fillKey: 'gt50' }
-    }
+
+    data: dataNY
+
+    // {
+    //    '071': {fillKey: 'lt50' },
+    //    '001': {fillKey: 'gt50' }
+    //}
 })
 
