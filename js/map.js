@@ -1,7 +1,10 @@
-
+//all of the fields that we need
 var countiesDict = {}
 var fillsNY = {}
 var dataNY = {}
+var AmericaStates = {}
+var fillUSMap = {}
+var dataUSMap = {}
 
 //sets up the different colors in USA
 function setNYCMapOverLay(){
@@ -37,6 +40,30 @@ function setNYCMapOverLay(){
     })
 }());
 
+(function getOrganDonationPercentage(){
+    $.get('js/datasets/State_Enrollment_2015_US.csv', function(csv){
+        var statesOrganDonation = Papa.parse(csv, {
+            complete: function(results) {
+                console.log(results)
+                var stateName, percentage
+
+                for(var state in results.data){
+                    if(state != 0){
+                        stateName = results.data[state][0].toUpperCase()
+                        percentage = results.data[state][2]
+                        if(AmericaStates[stateName] == null){
+                            AmericaStates[stateName] = {}
+                        }
+                        AmericaStates[stateName].percentage = percentage
+                    }
+                }
+                return results
+            }
+        })
+    })
+}());
+
+
 //sets up the US color overlays
 //I don't know what you're doing here
 function setUSColors (){
@@ -51,9 +78,7 @@ function setUSColors (){
     })
 }
 
-var AmericaStates = {}
-var fillUSMap = {}
-var dataUSMap = {}
+
 //sets up the colors for each of the 50 states
 function setUSDictionary(){
 
@@ -65,8 +90,9 @@ function setUSDictionary(){
 
     USColors = randomColor({
         count: 60,
-        luminosity: 'bright',
-        hue: 'random'
+        luminosity: 'dark',
+        hue: 'random',
+        format: 'rgba'
     });
 
     $.getJSON('lib/name-to-postal.json', function(json){
@@ -74,14 +100,17 @@ function setUSDictionary(){
 
         for(var aState in json) {
             postalCode = json[aState]
-            AmericaStates[aState] = {
-                'color': USColors[i],
-                'id': json[aState],
-            }
+
+            AmericaStates[aState].color = USColors[i]
+            AmericaStates[aState].id = json[aState]
+
+
             fillUSMap[aState] = USColors[i]
             i++
             dataUSMap[postalCode] = {fillKey: aState}
         }
+
+
 
         var map = new Datamap({
             element: document.getElementById('map'),
@@ -109,6 +138,15 @@ function setUSDictionary(){
 
 
     })
+
+
+}
+
+function setRBGAColor(rgb, percentage){
+    var rgbArray = rgb.substring(4, rgb.length-1).split(',')
+    rgbArray.push(percentage)
+
+    var rgbaArray = 
 
 
 }
