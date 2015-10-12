@@ -1,3 +1,5 @@
+const HIGHEST_PERCENTAGE_STATE = .86
+
 //all of the fields that we need
 var countiesDict = {}
 var fillsNY = {}
@@ -54,7 +56,7 @@ function setNYCMapOverLay(){
                         if(AmericaStates[stateName] == null){
                             AmericaStates[stateName] = {}
                         }
-                        AmericaStates[stateName].percentage = percentage
+                        AmericaStates[stateName].percentage = String(parseFloat(percentage)/HIGHEST_PERCENTAGE_STATE)
                     }
                 }
                 return results
@@ -91,34 +93,33 @@ function setUSDictionary(){
     USColors = randomColor({
         count: 60,
         luminosity: 'dark',
-        hue: 'random',
-        format: 'rgba'
+        //hue: 'random',
+        format: 'rgb'
     });
 
     $.getJSON('lib/name-to-postal.json', function(json){
         USDictionaryData = json
-
+        var rgbArray;
         for(var aState in json) {
             postalCode = json[aState]
 
-            AmericaStates[aState].color = USColors[i]
-            AmericaStates[aState].id = json[aState]
-
-
-            fillUSMap[aState] = USColors[i]
-            i++
-            dataUSMap[postalCode] = {fillKey: aState}
+            if(aState in AmericaStates){
+                AmericaStates[aState].color = USColors[i]
+                AmericaStates[aState].id = json[aState]
+                AmericaStates[aState].rgba = setRBGAColor('rgb(0,0,128)', AmericaStates[aState].percentage)
+                fillUSMap[aState] = AmericaStates[aState].rgba
+                i++
+                dataUSMap[postalCode] = {fillKey: aState}
+            }
         }
-
-
 
         var map = new Datamap({
             element: document.getElementById('map'),
             scope: 'usa',
             geographyConfig: {
-                highlightFillColor: '#F4C2C5'
+               // highlightFillColor: '#FC8d59'
             },
-            highlightFillColor: '#F4C2C5',
+            //highlightFillColor: '#FC8d59',
             setProjection: function(element, options) {
                 var projection, path;
                 projection = d3.geo.albersUsa()
@@ -143,12 +144,12 @@ function setUSDictionary(){
 }
 
 function setRBGAColor(rgb, percentage){
-    var rgbArray = rgb.substring(4, rgb.length-1).split(',')
-    rgbArray.push(percentage)
+    var rgbaValues = rgb.substring(4, rgb.length-1).split(',')
+    rgbaValues.push(percentage)
 
-    var rgbaArray = 
+    var rgbaArray = ["rgba("] + rgbaValues + [')']
 
-
+    return rgbaArray
 }
 
 //call this function
