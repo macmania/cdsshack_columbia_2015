@@ -7,7 +7,9 @@ var dataNY = {}
 var AmericaStates = {}
 var fillUSMap = {}
 var dataUSMap = {}
-
+var USBubbles = {}
+var USMap
+//var geocoder = new google.maps.Geocoder();
 //sets up the different colors in USA
 function setNYCMapOverLay(){
     var colorsNY = randomColor({
@@ -42,6 +44,8 @@ function setNYCMapOverLay(){
     })
 }());
 
+
+
 (function getOrganDonationPercentage(){
     $.get('js/datasets/State_Enrollment_2015_US.csv', function(csv){
         var statesOrganDonation = Papa.parse(csv, {
@@ -68,18 +72,20 @@ function setNYCMapOverLay(){
 
 //sets up the US color overlays
 //I don't know what you're doing here
-function setUSColors (){
-
+function setOrganDonationOrgsDots (){
     $.get('js/datasets/OPO-by-State.csv', function(csv){
         var usStateOrganRegistrations = Papa.parse(csv, {
             complete:function(results){
+                var i = 1;
+                for(; i < results.data.length; i++){
+                    console.log(getLatLngt(results.data[i][1]))
+                }
                 console.log(results)
                 return results
             }
         })
     })
 }
-
 
 //sets up the colors for each of the 50 states
 function setUSDictionary(){
@@ -89,13 +95,6 @@ function setUSDictionary(){
     var USColors = []
     var i = 0
     var postalCode = ""
-
-    USColors = randomColor({
-        count: 60,
-        luminosity: 'dark',
-        //hue: 'random',
-        format: 'rgb'
-    });
 
     $.getJSON('lib/name-to-postal.json', function(json){
         USDictionaryData = json
@@ -113,11 +112,16 @@ function setUSDictionary(){
             }
         }
 
-        var map = new Datamap({
+        /*****this is temporary ***/
+        //fillUSMap[Trouble] = '#bada55'
+        /*****this is temporary ***/
+
+        USMap = new Datamap({
             element: document.getElementById('map'),
             scope: 'usa',
             geographyConfig: {
-               // highlightFillColor: '#FC8d59'
+                highlightOnHover: false,
+                //highlightBorderColor: '#ccc'
             },
             //highlightFillColor: '#FC8d59',
             setProjection: function(element, options) {
@@ -137,24 +141,19 @@ function setUSDictionary(){
             data: dataUSMap
         });
 
-
+        USMap.labels()
+        //map.bubbles([
+        //
+        //])
     })
-
-
 }
 
-function setRBGAColor(rgb, percentage){
-    var rgbaValues = rgb.substring(4, rgb.length-1).split(',')
-    rgbaValues.push(percentage)
-
-    var rgbaArray = ["rgba("] + rgbaValues + [')']
-
-    return rgbaArray
-}
 
 //call this function
 setUSDictionary()
 setNYCMapOverLay()
+//setOrganDonationOrgsDots()
+
 
 var newyorkcity = new Datamap({
     scope: 'subunits-ny',
@@ -192,3 +191,59 @@ var newyorkcity = new Datamap({
     //}
 })
 
+//helper functions
+
+//returns the rgba value based on the percentage of organ donation signups
+function setRBGAColor(rgb, percentage){
+    var rgbaValues = rgb.substring(4, rgb.length-1).split(',')
+    rgbaValues.push(percentage)
+
+    var rgbaArray = ["rgba("] + rgbaValues + [')']
+
+    return rgbaArray
+}
+
+//returns the lat and longtitude of organ procurement organization
+function getLatLngt(address){
+    //format for the address is 'Alabama Organ Center (ALOB), Birmingham, AL'
+    //format needs to be Birmingham, AL
+    if(address == null)
+        return
+
+    var addressArray = address.split(',')
+    var API_KEY = ' '
+    addressArray = addressArray[1] + ',' + addressArray[2] + ', USA'
+    addressArray = addressArray.replace('+', '')
+    addressArray = addressArray.replace(' ', '+')
+    var latLngt;
+
+    var url = 'https://maps.googleapis.com/maps/api/geocode/json?address=' +addressArray+'&key=' + API_KEY
+
+    $.get(url, function(response){
+        var results
+        if(response.status == 'OK') {
+            results = response.results
+            latLngt = [results[0].geometry.location.lat, results[0].geometry.location.lng]
+            console.log(results)
+            console.log(latLngt)
+        }
+    })
+
+    //geocoder.geocode({ 'address': addressArray, function(results, status){
+    //    if(status == 'OK') {
+    //        console.log(results)
+    //        //latLngt = results.
+    //    }
+    //}
+    //})
+
+    //$.get()
+    //https://maps.googleapis.com/maps/api/geocode/json?address=1600+Amphitheatre+Parkway,+Mountain+View,+CA&key=API_KEY
+
+    return latLngt
+}
+
+
+/**
+ * Sample code, not done yet
+ * */
