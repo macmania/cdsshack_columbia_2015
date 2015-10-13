@@ -17,31 +17,6 @@ var NYMap
 var outOfStateUSA = [];
 var headquartersUSA = [];
 
-////overlay
-//function getOrganDonationPercentageNY(){
-//    $.get('js/datasets/Donate_Life_Organ_and_Tissue_Donor_Registry_Enrollment_by_County__Latest_Month_Combined.csv', function(csv){
-//        Papa.parse(csv, {
-//            complete: function(results) {
-//                console.log(results)
-//                var countyName, percentage
-//                var i = 1;
-//                for(; i < 66; i++){
-//                    countyName = results.data[i][2]
-//                    if(countyName == 'Out of State' || countyName == 'Unknown')
-//                        continue
-//
-//                    percentage = results.data[i][6]
-//                    if(NYCounties[countyName] == null){
-//                        NYCounties[countyName] = {}
-//                    }
-//                    NYCounties[countyName].percentage = String(parseFloat(percentage)/HIGHEST_PERCENTAGE_STATE)
-//                }
-//                return results
-//            }
-//        })
-//    })
-//}
-//getOrganDonationPercentageNY();
 
 /**************************** USA Visualization code**************************************/
 (function getOrganDonationPercentage(){

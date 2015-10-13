@@ -6,7 +6,7 @@ var NYCounties = {}
 var NYMap
 
 //temporary right now, later
-var outOfStateUSA = [];
+var enrollmentCenterBubbles = [];
 var headquartersUSA = [];
 
 //overlay
@@ -52,6 +52,8 @@ function setNYDictionary(){
             }
             i++
         }
+        fillNYMap['Enrollment Center Dots'] = '#FFB53B';
+        fillNYMap['DMV Center Dots'] = '#00B7ED'
 
         NYMap = new Datamap({
             scope: 'subunits-ny',
@@ -81,9 +83,68 @@ function setNYDictionary(){
     });
 }
 
+
 setNYDictionary()
 
+/**Helper functions***/
+//sets the organ donation dots in the nyc map
+function setEnrollmentCenterDots(){
+    $.get('js/datasets/IDNYC_Enrollment_Centers_10-3-2015-geo-code.csv', function(csv){
+        Papa.parse(csv, {
+            complete: function(results){
+                var i = 1;
+                for(; i < results.data.length; i++){
+                    var name = results.data[i][0];
+                    if(results.data[i][1] != null && results.data[i][2] != null) {
+                        enrollmentCenterBubbles.push({
+                            name: name,
+                            latitude: results.data[i][1],
+                            longitude: results.data[i][2],
+                            fillKey: 'Enrollment Center Dots',
+                            radius: 5
+                        })
+                    }
+                }
+            }
+        })
+        //sets the bubbles in NYC area
+        //NYMap.bubbles(enrollmentCenterBubbles)
+    })
+}
+//sets the DMV location dots, it'll just be a big circle for verbosity
+//data: Department_of_Motor_Vehicle__DMV__Office_Locations-NY.csv
+function setDMVLocationDots(){
+    $.get('js/datasets/Department_of_Motor_Vehicle__DMV__Office_Locations-NY-geocode.csv', function(csv){
+        Papa.parse(csv, {
+            complete: function(results){
+                var i = 1;
+                for(; i < results.data.length; i++){
+                    var name = results.data[i][0];
+                    if(results.data[i][1] != null && results.data[i][2] != null) {
+                        enrollmentCenterBubbles.push({
+                            name: name,
+                            latitude: results.data[i][1],
+                            longitude: results.data[i][2],
+                            fillKey: 'DMV Center Dots',
+                            radius: 5
+                        })
+                    }
+                }
+            }
+        })
+        //sets the bubbles in NYC area
+        NYMap.bubbles(enrollmentCenterBubbles)
+    })
+}
 
+//just show how many people have registered to vote and stuff
+//data: 2015_Voter_Registration_By_County.csv
+function setVotingEnrollmentPopUp(){
+
+}
+
+setEnrollmentCenterDots()
+setDMVLocationDots()
 //helper functions
 
 //returns the rgba value based on the percentage of organ donation signups
