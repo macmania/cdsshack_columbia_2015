@@ -47,8 +47,13 @@ function setNYDictionary(){
             if(countyName in NYCounties){
                 NYCounties[countyName].id = county.id
                 NYCounties[countyName].rgba = setRBGAColor('rgb(0,128,0)', NYCounties[countyName].percentage)
+                NYCounties[countyName].name = countyName
                 fillNYMap[countyName] = NYCounties[countyName].rgba
-                dataNYMap[county.id] = {fillKey: countyName}
+                dataNYMap[county.id] = {
+                    fillKey: countyName,
+                    name: countyName,
+                    percentage: NYCounties[countyName].registeredVoters.toFixed(2)
+                }
             }
             i++
         }
@@ -61,7 +66,14 @@ function setNYDictionary(){
             projection: '',
             geographyConfig: {
                 dataUrl: 'newyork-with-counties.json',
-                highlightFillColor: '#F4C2C5'
+                highlightFillColor: '#F4C2C5',
+
+                popupTemplate: function(geo, data) {
+                            return ['<div class="hoverinfo"><strong>',
+                                'Percent of voters ' + data.percentage,
+                                '% in ' + data.name,
+                                '</strong></div>'].join('');
+                        }
             },
 
             setProjection: function(element) {
@@ -83,7 +95,7 @@ function setNYDictionary(){
     });
 }
 
-
+setVotingEnrollmentPopUp()
 setNYDictionary()
 
 /**Helper functions***/
@@ -140,7 +152,37 @@ function setDMVLocationDots(){
 //just show how many people have registered to vote and stuff
 //data: 2015_Voter_Registration_By_County.csv
 function setVotingEnrollmentPopUp(){
+    $.get('js/datasets/2015_Voter_Registration_By_County.csv', function(csv){
+        Papa.parse(csv, {
+            complete: function(results){
+                var i = 1, countyName, registeredVotersPercent;
+                for (; i < results.data.length; i++){
+                    countyName = results.data[i][2]
+                    registeredVotersPercent = results.data[i][7]/results.data[i][4]*100
+                    if(registeredVotersPercent == null){
+                        NYCounties[countyName].registeredVoters = 0
+                    }
+                    else{
+                        NYCounties[countyName].registeredVoters = registeredVotersPercent
+                    }
 
+                }
+            }
+        })
+    })
+
+    console.log(NYCounties)
+
+
+
+    //NYMap.geographyConfig = {
+    //    popupTemplate: function(geo, data) {
+    //        return ['<div class="hoverinfo"><strong>',
+    //            'Number of things in ' + geo.properties.name,
+    //            ': ' + data.numberOfThings,
+    //            '</strong></div>'].join('');
+    //    }
+    //}
 }
 
 setEnrollmentCenterDots()
