@@ -1,51 +1,49 @@
 const HIGHEST_PERCENTAGE_STATE = .86
 
 //all of the fields that we need
-var countiesDict = {}
-var fillsNY = {}
-var dataNY = {}
+var fillNYMap = {}
+var dataNYMap = {}
+
 var AmericaStates = {}
+var NYCounties = {}
 var fillUSMap = {}
 var dataUSMap = {}
 var USBubbles = []
+
 var USMap
-//var geocoder = new google.maps.Geocoder();
-//sets up the different colors in USA
-function setNYCMapOverLay(){
-    var colorsNY = randomColor({
-        count: 62,
-        luminosity: 'bright',
-        hue: 'random'
-    });
-    var i = 0;
-    $.getJSON('newyork-with-counties.json', function(json){
-        for(var county of json.objects['subunits-ny'].geometries){
-            var name = county.properties['name'] != null ? county.properties['name'] : 'empty'
-            countiesDict[name] = {
-                "id": county.id,
-                "color": colorsNY[i]
-            }
-            fillsNY[county.id] = colorsNY[i]
-            dataNY[county.id] = {fillKey: county.id}
-            i++
-        }
-    });
-    return countiesDict
-}
-//sets up the nyc county overlay
-(function setNYCCountyOverlay(){
-    $.get('js/datasets/2015_Voter_Registration_By_County.csv', function(csv){
-        var nycCountiesVoterRegistration = Papa.parse(csv, {
-            complete: function(results) {
-                console.log(results)
-                return results
-            }
-        })
-    })
-}());
+var NYMap
 
+//temporary right now, later
+var outOfStateUSA = [];
+var headquartersUSA = [];
 
+////overlay
+//function getOrganDonationPercentageNY(){
+//    $.get('js/datasets/Donate_Life_Organ_and_Tissue_Donor_Registry_Enrollment_by_County__Latest_Month_Combined.csv', function(csv){
+//        Papa.parse(csv, {
+//            complete: function(results) {
+//                console.log(results)
+//                var countyName, percentage
+//                var i = 1;
+//                for(; i < 66; i++){
+//                    countyName = results.data[i][2]
+//                    if(countyName == 'Out of State' || countyName == 'Unknown')
+//                        continue
+//
+//                    percentage = results.data[i][6]
+//                    if(NYCounties[countyName] == null){
+//                        NYCounties[countyName] = {}
+//                    }
+//                    NYCounties[countyName].percentage = String(parseFloat(percentage)/HIGHEST_PERCENTAGE_STATE)
+//                }
+//                return results
+//            }
+//        })
+//    })
+//}
+//getOrganDonationPercentageNY();
 
+/**************************** USA Visualization code**************************************/
 (function getOrganDonationPercentage(){
     $.get('js/datasets/State_Enrollment_2015_US.csv', function(csv){
         var statesOrganDonation = Papa.parse(csv, {
@@ -82,6 +80,14 @@ function setOrganDonationOrgsDots (){
                     console.log(results.data[i][1], results.data[i][2])
                     var name = results.data[i][0].split(',')[0]
                     if(results.data[i][1] != null && results.data[i][2] != null){
+                        outOfStateUSA.push({
+                            name: name,
+                            latitude: results.data[i][1],
+                            longitude: results.data[i][2],
+                            fillKey: 'Organ Donation Head Quarters',
+                            radius: 5
+                        })
+
                         USBubbles.push({
                             name: name,
                             latitude: results.data[i][1],
@@ -99,7 +105,6 @@ function setOrganDonationOrgsDots (){
         USMap.bubbles(USBubbles)
     })
 }
-
 //sets the organ donation dots that are out of state
 function setOutStateOrganDonationDots(){
     var usStatesOrg = {}
@@ -128,6 +133,12 @@ function setOutStateOrganDonationDots(){
 
                 for(var state in AmericaStates){
                     if('number of out-of-state orgs' in AmericaStates[state]){
+                        headquartersUSA.push({
+                            name: 'out of state organ procurement organization',
+                            centered: AmericaStates[state].id,
+                            radius: 5*AmericaStates[state]['number of out-of-state orgs'],
+                            fillKey: 'Out of State Organ Donation'
+                        })
                         USBubbles.push({
                             name: 'out of state organ procurement organization',
                             centered: AmericaStates[state].id,
@@ -141,6 +152,9 @@ function setOutStateOrganDonationDots(){
         console.log(AmericaStates)
     })
 }
+
+/**************************** End USA Visualization code**************************************/
+
 
 //sets up the colors for each of the 50 states
 function setUSDictionary(){
@@ -158,7 +172,6 @@ function setUSDictionary(){
             postalCode = json[aState]
 
             if(aState in AmericaStates){
-                AmericaStates[aState].color = USColors[i]
                 AmericaStates[aState].id = json[aState]
                 AmericaStates[aState].rgba = setRBGAColor('rgb(0,0,128)', AmericaStates[aState].percentage)
                 fillUSMap[aState] = AmericaStates[aState].rgba
@@ -168,8 +181,8 @@ function setUSDictionary(){
         }
 
         /*****this is temporary ***/
-        fillUSMap['Organ Donation Head Quarters'] = '#FF262D'
-        fillUSMap['Out of State Organ Donation'] = '#A7F968'
+        fillUSMap['Organ Donation Head Quarters'] = '#FA8072'
+        fillUSMap['Out of State Organ Donation'] = '#FFFAFA'
         /*****this is temporary ***/
 
         USMap = new Datamap({
@@ -201,49 +214,56 @@ function setUSDictionary(){
     })
 }
 
+function setNYDictionary(){
+    var i = 0;
+    $.getJSON('newyork-with-counties.json', function(json){
+        var countyName
+        for(var county of json.objects['subunits-ny'].geometries){
+            countyName = county.properties['name'] != null ? county.properties['name'] : 'empty'
 
+            if(countyName in NYCounties){
+                NYCounties[countyName].id = county.id
+                NYCounties.rgba = setRBGAColor('rgb(0,128,0)', NYCounties[countyName].percentage)
+                fillNYMap[countyName] = NYCounties[county].rgba
+                dataNYMap[county.id] = countyName
+            }
+            i++
+        }
+
+        NYMap = new Datamap({
+            scope: 'subunits-ny',
+            element: document.getElementById('container1'),
+            projection: '',
+            geographyConfig: {
+                dataUrl: 'newyork-with-counties.json',
+                highlightFillColor: '#F4C2C5'
+            },
+
+            setProjection: function(element) {
+                var projection = d3.geo.equirectangular()
+                    .center([-72, 43])
+                    .rotate([4.4, 0])
+                    .scale(8000)
+                    .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+                var path = d3.geo.path()
+                    .projection(projection);
+
+                return {path: path, projection: projection};
+            },
+            fills: fillNYMap,
+            data: dataNYMap
+        })
+
+        NYMap.labels()
+    });
+}
 //call this function
 setUSDictionary()
-setNYCMapOverLay()
+//setNYDictionary()
+
 setOutStateOrganDonationDots()
 setOrganDonationOrgsDots()
 
-
-var newyorkcity = new Datamap({
-    scope: 'subunits-ny',
-    element: document.getElementById('container1'),
-    projection: '',
-    geographyConfig: {
-        dataUrl: 'newyork-with-counties.json',
-        highlightFillColor: '#F4C2C5'
-    },
-
-    setProjection: function(element) {
-        var projection = d3.geo.equirectangular()
-            .center([-72, 43])
-            .rotate([4.4, 0])
-            .scale(8000)
-            .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
-        var path = d3.geo.path()
-            .projection(projection);
-
-        return {path: path, projection: projection};
-    },
-    fills: fillsNY,
-    //  {
-    //    defaultFill: '#FF00FF',
-    //    lt50: 'rgba(0,244,244,0.9)',
-    //    gt50: 'red'
-    //},
-
-
-    data: dataNY
-
-    // {
-    //    '071': {fillKey: 'lt50' },
-    //    '001': {fillKey: 'gt50' }
-    //}
-})
 
 //helper functions
 
@@ -257,3 +277,16 @@ function setRBGAColor(rgb, percentage){
     return rgbaArray
 }
 
+
+/**Temporary - to do**/
+//event listeners
+$('#out-of-state-viz').click(function(){
+    var property = document.getElementById('#out-of-state-viz')
+    if(property.style.backgroundColor == '#FFFAFA'){ //it's 'active'
+
+    }
+})
+
+$('#headquarters-viz').click(function(){
+
+})

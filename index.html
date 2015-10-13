@@ -14,6 +14,14 @@
         <script src="bower_components/datamaps/dist/datamaps.usa.js"></script>
         <script src="bower_components/papaparse/papaparse.js"></script>
 
+        <script>
+            var count = 1;
+            function setColor(btn, color) {
+                var property = document.getElementById(btn);
+                property.style.backgroundColor = color;
+            }
+        </script>
+
         <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css">
 
     </head>
@@ -21,7 +29,13 @@
     <body>
         <!--<button type="button" class="btn btn-primary" data-toggle="modal"></button>-->
         <div id="map" style="position: relative; width: 1400px; height: 600px;"></div>
+
+        <!--- to-do, not yet done-->
+        <!--<div><button id="dmv-viz" class="btn btn-default" type="button" value="dmv viz" onclick="setColor('dmv-viz', '#101010')";>Show DMV</button></div>-->
+        <!--<div><button id="out-of-state-viz" class="btn btn-default" type="button" value="out of state viz" onclick="setColor('out-of-state-viz', '#FFFAFA')";>Show out-of-state locations</button></div>-->
+        <!--<div><button id="headquarters-viz" class="btn btn-default" type="button" value="headquarters viz" onclick="setColor('headquarters-viz', '#FA8072')";>Show organization headquarters</button></div>-->
         <div id="container1" style="padding-top: 5%; position:relative; width: 1500px; height: 900px;"></div>
     </body>
     <script src="js/map.js"></script>
+    <script src="js/nymap.js"></script>
 </html>
