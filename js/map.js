@@ -86,7 +86,7 @@ function setOrganDonationOrgsDots (){
                             name: name,
                             latitude: results.data[i][1],
                             longitude: results.data[i][2],
-                            fillKey: 'NY',
+                            fillKey: 'Organ Donation Head Quarters',
                             radius: 5
                         })
                     }
@@ -97,6 +97,48 @@ function setOrganDonationOrgsDots (){
         })
 
         USMap.bubbles(USBubbles)
+    })
+}
+
+//sets the organ donation dots that are out of state
+function setOutStateOrganDonationDots(){
+    var usStatesOrg = {}
+
+    $.get('js/datasets/OPO-by-State.csv', function(csv) {
+        var outStateOrganDots = Papa.parse(csv, {
+            complete: function(results) {
+                var i = 1, stateName
+                for (; i < results.data.length; i++) {
+                    stateName = results.data[i][0].toUpperCase()
+                    if(stateName in AmericaStates && results.data[i][2] == 1){
+                            if('number of out-of-state orgs' in AmericaStates[stateName]){
+                                AmericaStates[stateName]['number of out-of-state orgs']++
+                            }
+                            else{
+                                AmericaStates[stateName]['number of out-of-state orgs'] = 1
+                            }
+
+                    }
+                    else if (results.data[i][2] == 1){
+                        AmericaStates[stateName] = {
+                            'number of out-of-state orgs': 1
+                        }
+                    }
+                }
+
+                for(var state in AmericaStates){
+                    if('number of out-of-state orgs' in AmericaStates[state]){
+                        USBubbles.push({
+                            name: 'out of state organ procurement organization',
+                            centered: AmericaStates[state].id,
+                            radius: 5*AmericaStates[state]['number of out-of-state orgs'],
+                            fillKey: 'Out of State Organ Donation'
+                        })
+                    }
+                }
+            }
+        })
+        console.log(AmericaStates)
     })
 }
 
@@ -126,7 +168,8 @@ function setUSDictionary(){
         }
 
         /*****this is temporary ***/
-        //fillUSMap[Trouble] = '#bada55'
+        fillUSMap['Organ Donation Head Quarters'] = '#FF262D'
+        fillUSMap['Out of State Organ Donation'] = '#A7F968'
         /*****this is temporary ***/
 
         USMap = new Datamap({
@@ -155,9 +198,6 @@ function setUSDictionary(){
         });
 
         USMap.labels()
-        //map.bubbles([
-        //
-        //])
     })
 }
 
@@ -165,6 +205,7 @@ function setUSDictionary(){
 //call this function
 setUSDictionary()
 setNYCMapOverLay()
+setOutStateOrganDonationDots()
 setOrganDonationOrgsDots()
 
 
@@ -215,3 +256,4 @@ function setRBGAColor(rgb, percentage){
 
     return rgbaArray
 }
+
