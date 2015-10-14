@@ -52,7 +52,8 @@ function setNYDictionary(){
                 dataNYMap[county.id] = {
                     fillKey: countyName,
                     name: countyName,
-                    percentage: NYCounties[countyName].registeredVoters.toFixed(2)
+                    percentage: NYCounties[countyName].registeredVoters.toFixed(2),
+                    //organDonationPercent: NYCounties[countyName].percentage.toFixed(2)
                 }
             }
             i++
@@ -71,7 +72,7 @@ function setNYDictionary(){
                 popupTemplate: function(geo, data) {
                             return ['<div class="hoverinfo"><strong>',
                                 'Percent of voters ' + data.percentage,
-                                '% in ' + data.name,
+                                '% in ' + data.name +
                                 '</strong></div>'].join('');
                         }
             },
