@@ -190,8 +190,12 @@ function setUSDictionary(){
 }
 
 function setNYDictionary(){
-    var i = 0;
-    $.getJSON('newyork-with-counties.json', function(json){
+    return $.ajax({
+        type: "GET",
+        url: "newyork-with-counties.json",
+        cache: false,
+        async: false
+    }).done(function(json) {
         var countyName
         for(var county of json.objects['subunits-ny'].geometries){
             countyName = county.properties['name'] != null ? county.properties['name'] : 'empty'
@@ -232,6 +236,51 @@ function setNYDictionary(){
         NYMap.labels()
     });
 }
+
+//
+//function setNYDictionary(){
+//    var i = 0;
+//    $.getJSON('newyork-with-counties.json', function(json){
+//        var countyName
+//        for(var county of json.objects['subunits-ny'].geometries){
+//            countyName = county.properties['name'] != null ? county.properties['name'] : 'empty'
+//
+//            if(countyName in NYCounties){
+//                NYCounties[countyName].id = county.id
+//                NYCounties.rgba = setRBGAColor('rgb(0,128,0)', NYCounties[countyName].percentage)
+//                fillNYMap[countyName] = NYCounties[county].rgba
+//                dataNYMap[county.id] = countyName
+//            }
+//            i++
+//        }
+//
+//        NYMap = new Datamap({
+//            scope: 'subunits-ny',
+//            element: document.getElementById('container1'),
+//            projection: '',
+//            geographyConfig: {
+//                dataUrl: 'newyork-with-counties.json',
+//                highlightFillColor: '#F4C2C5'
+//            },
+//
+//            setProjection: function(element) {
+//                var projection = d3.geo.equirectangular()
+//                    .center([-72, 43])
+//                    .rotate([4.4, 0])
+//                    .scale(8000)
+//                    .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
+//                var path = d3.geo.path()
+//                    .projection(projection);
+//
+//                return {path: path, projection: projection};
+//            },
+//            fills: fillNYMap,
+//            data: dataNYMap
+//        })
+//
+//        NYMap.labels()
+//    });
+//}
 //call this function
 setUSDictionary()
 //setNYDictionary()
