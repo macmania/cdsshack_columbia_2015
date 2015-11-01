@@ -46,26 +46,6 @@ var headquartersUSA = [];
         })
     })
 
-    //$.get('js/datasets/State_Enrollment_2015_US.csv', function(csv){
-    //    var statesOrganDonation = Papa.parse(csv, {
-    //        complete: function(results) {
-    //            console.log(results)
-    //            var stateName, percentage
-    //
-    //            for(var state in results.data){
-    //                if(state != 0){
-    //                    stateName = results.data[state][0].toUpperCase()
-    //                    percentage = results.data[state][2]
-    //                    if(AmericaStates[stateName] == null){
-    //                        AmericaStates[stateName] = {}
-    //                    }
-    //                    AmericaStates[stateName].percentage = String(parseFloat(percentage)/HIGHEST_PERCENTAGE_STATE)
-    //                }
-    //            }
-    //            return results
-    //        }
-    //    })
-    //})
 }());
 
 
@@ -110,39 +90,6 @@ function setOrganDonationOrgsDots (){
         })
         USMap.bubbles(USBubbles)
     });
-
-    //$.get('js/datasets/OPO-by-State-temp.csv', function(csv){
-    //    var usStateOrganRegistrations = Papa.parse(csv, {
-    //        complete:function(results){
-    //            var i = 1;
-    //            for(; i < results.data.length; i++){
-    //                console.log(results.data[i][1], results.data[i][2])
-    //                var name = results.data[i][0].split(',')[0]
-    //                if(results.data[i][1] != null && results.data[i][2] != null){
-    //                    outOfStateUSA.push({
-    //                        name: name,
-    //                        latitude: results.data[i][1],
-    //                        longitude: results.data[i][2],
-    //                        fillKey: 'Organ Donation Head Quarters',
-    //                        radius: 5
-    //                    })
-    //
-    //                    USBubbles.push({
-    //                        name: name,
-    //                        latitude: results.data[i][1],
-    //                        longitude: results.data[i][2],
-    //                        fillKey: 'Organ Donation Head Quarters',
-    //                        radius: 5
-    //                    })
-    //                }
-    //            }
-    //            console.log(results)
-    //            return results
-    //        }
-    //    })
-    //
-    //    USMap.bubbles(USBubbles)
-    //})
 }
 //sets the organ donation dots that are out of state
 function setOutStateOrganDonationDots(){
@@ -403,7 +350,7 @@ function setNYDictionary(){
 
 //call this function
 setUSDictionary()
-//setNYDictionary()
+setNYDictionary()
 
 setOutStateOrganDonationDots()
 setOrganDonationOrgsDots()
