@@ -11,7 +11,12 @@ var headquartersUSA = [];
 
 //overlay
 (function getOrganDonationPercentageNY(){
-    $.get('js/datasets/Donate_Life_Organ_and_Tissue_Donor_Registry_Enrollment_by_County__Latest_Month_Combined.csv', function(csv){
+    $.ajax({
+        type: "GET",
+        url: "js/datasets/Donate_Life_Organ_and_Tissue_Donor_Registry_Enrollment_by_County__Latest_Month_Combined.csv",
+        async: false,
+        cache: false,
+    }).done(function(csv){
         Papa.parse(csv, {
             complete: function(results) {
                 console.log(results)
@@ -32,6 +37,7 @@ var headquartersUSA = [];
             }
         })
     })
+
 })();
 
 //getOrganDonationPercentageNY();
@@ -39,7 +45,13 @@ var headquartersUSA = [];
 
 function setNYDictionary(){
     var i = 0;
-    $.getJSON('newyork-with-counties.json', function(json){
+
+    return $.ajax({
+        type: "GET",
+        url: "newyork-with-counties.json",
+        async: false,
+        cache: false
+    }).done(function(json){
         var countyName
         for(var county of json.objects['subunits-ny'].geometries){
             countyName = county.properties['name'] != null ? county.properties['name'] : 'empty'
@@ -70,11 +82,11 @@ function setNYDictionary(){
                 highlightFillColor: '#F4C2C5',
 
                 popupTemplate: function(geo, data) {
-                            return ['<div class="hoverinfo"><strong>',
-                                'Percent of voters ' + data.percentage,
-                                '% in ' + data.name +
-                                '</strong></div>'].join('');
-                        }
+                    return ['<div class="hoverinfo"><strong>',
+                        'Percent of voters ' + data.percentage,
+                        '% in ' + data.name +
+                        '</strong></div>'].join('');
+                }
             },
 
             setProjection: function(element) {
@@ -99,10 +111,16 @@ function setNYDictionary(){
 setVotingEnrollmentPopUp()
 setNYDictionary()
 
+
 /**Helper functions***/
 //sets the organ donation dots in the nyc map
 function setEnrollmentCenterDots(){
-    $.get('js/datasets/IDNYC_Enrollment_Centers_10-3-2015-geo-code.csv', function(csv){
+    return $.ajax({
+        type: "GET",
+        url: "js/datasets/IDNYC_Enrollment_Centers_10-3-2015-geo-code.csv",
+        async: false,
+        cache: false,
+    }).done(function(csv){
         Papa.parse(csv, {
             complete: function(results){
                 var i = 1;
@@ -120,14 +138,19 @@ function setEnrollmentCenterDots(){
                 }
             }
         })
-        //sets the bubbles in NYC area
-        //NYMap.bubbles(enrollmentCenterBubbles)
-    })
+    });
 }
+
+
 //sets the DMV location dots, it'll just be a big circle for verbosity
 //data: Department_of_Motor_Vehicle__DMV__Office_Locations-NY.csv
 function setDMVLocationDots(){
-    $.get('js/datasets/Department_of_Motor_Vehicle__DMV__Office_Locations-NY-geocode.csv', function(csv){
+    $.ajax({
+        type: "GET",
+        url: "js/datasets/Department_of_Motor_Vehicle__DMV__Office_Locations-NY-geocode.csv",
+        cache: false,
+        async: false
+    }).done(function(csv){
         Papa.parse(csv, {
             complete: function(results){
                 var i = 1;
@@ -147,13 +170,19 @@ function setDMVLocationDots(){
         })
         //sets the bubbles in NYC area
         NYMap.bubbles(enrollmentCenterBubbles)
-    })
+    });
+
 }
 
 //just show how many people have registered to vote and stuff
 //data: 2015_Voter_Registration_By_County.csv
 function setVotingEnrollmentPopUp(){
-    $.get('js/datasets/2015_Voter_Registration_By_County.csv', function(csv){
+    return $.ajax({
+        type: "GET",
+        url: "js/datasets/2015_Voter_Registration_By_County.csv",
+        async : false,
+        cache: false,
+    }).done(function(csv){
         Papa.parse(csv, {
             complete: function(results){
                 var i = 1, countyName, registeredVotersPercent;

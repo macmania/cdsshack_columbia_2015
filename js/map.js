@@ -11,7 +11,6 @@ var dataUSMap = {}
 var USBubbles = []
 
 var USMap
-var NYMap
 
 //temporary right now, later
 var outOfStateUSA = [];
@@ -251,106 +250,10 @@ function setUSDictionary(){
         USMap.labels()
     });
 
-    //$.getJSON('lib/name-to-postal.json', function(json){
-    //    USDictionaryData = json
-    //    var rgbArray;
-    //    for(var aState in json) {
-    //        postalCode = json[aState]
-    //
-    //        if(aState in AmericaStates){
-    //            AmericaStates[aState].id = json[aState]
-    //            AmericaStates[aState].rgba = setRBGAColor('rgb(0,0,128)', AmericaStates[aState].percentage)
-    //            fillUSMap[aState] = AmericaStates[aState].rgba
-    //            i++
-    //            dataUSMap[postalCode] = {fillKey: aState}
-    //        }
-    //    }
-    //
-    //    /*****this is temporary ***/
-    //    fillUSMap['Organ Donation Head Quarters'] = '#FA8072'
-    //    fillUSMap['Out of State Organ Donation'] = '#FFFAFA'
-    //    /*****this is temporary ***/
-    //
-    //    USMap = new Datamap({
-    //        element: document.getElementById('map'),
-    //        scope: 'usa',
-    //        geographyConfig: {
-    //            highlightOnHover: false,
-    //            //highlightBorderColor: '#ccc'
-    //        },
-    //        //highlightFillColor: '#FC8d59',
-    //        setProjection: function(element, options) {
-    //            var projection, path;
-    //            projection = d3.geo.albersUsa()
-    //                .scale(1300)
-    //                .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
-    //
-    //            path = d3.geo.path()
-    //                .projection( projection )
-    //            return {
-    //                path: path,
-    //                projection: projection
-    //            };
-    //        },
-    //        fills: fillUSMap,
-    //        data: dataUSMap
-    //    });
-    //
-    //    USMap.labels()
-    //})
-}
-
-function setNYDictionary(){
-    return $.ajax({
-        type: "GET",
-        url: "newyork-with-counties.json",
-        cache: false,
-        async: false
-    }).done(function(json) {
-        var countyName
-        for(var county of json.objects['subunits-ny'].geometries){
-            countyName = county.properties['name'] != null ? county.properties['name'] : 'empty'
-
-            if(countyName in NYCounties){
-                NYCounties[countyName].id = county.id
-                NYCounties.rgba = setRBGAColor('rgb(0,128,0)', NYCounties[countyName].percentage)
-                fillNYMap[countyName] = NYCounties[county].rgba
-                dataNYMap[county.id] = countyName
-            }
-            i++
-        }
-
-        NYMap = new Datamap({
-            scope: 'subunits-ny',
-            element: document.getElementById('container1'),
-            projection: '',
-            geographyConfig: {
-                dataUrl: 'newyork-with-counties.json',
-                highlightFillColor: '#F4C2C5'
-            },
-
-            setProjection: function(element) {
-                var projection = d3.geo.equirectangular()
-                    .center([-72, 43])
-                    .rotate([4.4, 0])
-                    .scale(8000)
-                    .translate([element.offsetWidth / 2, element.offsetHeight / 2]);
-                var path = d3.geo.path()
-                    .projection(projection);
-
-                return {path: path, projection: projection};
-            },
-            fills: fillNYMap,
-            data: dataNYMap
-        })
-
-        NYMap.labels()
-    });
 }
 
 //call this function
 setUSDictionary()
-setNYDictionary()
 
 setOutStateOrganDonationDots()
 setOrganDonationOrgsDots()
